@@ -1,44 +1,26 @@
 #include "SPI.h"
 #include "WS2801.h"
+#include "Mode.h"
+#include "OneThirdStrobe.h"
 
-/*****************************************************************************
-Example sketch for driving WS2801 pixels
-*****************************************************************************/
-
-// Choose which 2 pins you will use for output.
-// Can be any valid output pins.
-// The colors of the wires may be totally different so
-// BE SURE TO CHECK YOUR PIXELS TO SEE WHICH WIRES TO USE!
 int dataPin = 7;
 int clockPin = 6;
-// Don't forget to connect the ground wire to Arduino ground,
-// and the +5V wire to a +5V supply
-
-
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(25, dataPin, clockPin);
-
-// Optional: leave off pin numbers to use hardware SPI
-// (pinout is then specific to each board and can't be changed)
-//WS2801 strip = WS2801(25);
+Mode* modes[1];
+int currentMode = 0;
+int numModes = 1;
 
 void setup() {
-    
   strip.begin();
-
-  // Update LED contents, to start they are all 'off'
-  strip.show();
 }
 
 
 void loop() {
   // Some example procedures showing how to display to the pixels
-  
-  colorWipe(Color(255, 0, 0), 50);
-  colorWipe(Color(0, 255, 0), 50);
-  colorWipe(Color(0, 0, 255), 50);
-  rainbow(20);
-  rainbowCycle(20);
+  modes[currentMode]->update();
+  //TODO check for mode select button
+  //TODO update display text if the modes text has changed
 }
 
 void rainbow(uint8_t wait) {
