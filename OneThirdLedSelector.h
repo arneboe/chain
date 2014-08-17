@@ -33,10 +33,7 @@ public:
     //and turn them off at the same time
     for(int i = 0; i < onLedsSize; ++i)
     {
-      newOffLeds[i] = onLeds[i];
-      colors[newOffLeds[i]].v = 0;
-      colors[newOffLeds[i]].s = 0;
-            
+      newOffLeds[i] = onLeds[i];   
     }
     int newOffLedsSize = onLedsSize;
     

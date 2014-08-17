@@ -22,7 +22,7 @@ public:
   {
     //calc new color
     currentColor.h = (currentColor.h + 129) % 256; //129 to move around in a slow circle
-    
+    leds.update();
     //turn old leds off
     for(int i = 0; i < leds.offLedsSize; ++i)
     {
