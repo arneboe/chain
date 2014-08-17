@@ -42,6 +42,10 @@ void updateColors()
   for(int i = 0; i < LED_COUNT; ++i)
   {
     hsv2rgb_rainbow(colors[i], rgb);
+    //scale green down to 35%
+    //because green is much brighter
+    //35% has been calculated from the datasheet lumen values (34.x% really)
+    rgb.g = map(rgb.g, 0, 255, 0, 89);
     strip.setPixelColor(i, rgb.r, rgb.g, rgb.b);
   }
   strip.show();
