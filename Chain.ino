@@ -4,6 +4,7 @@
 #include "Mode.h"
 #include "OneThirdStrobe.h"
 #include "OneThirdStrobeWhite.h"
+#include "FullStrobeWhite.h"
 
 #define LED_COUNT 20
 
@@ -14,9 +15,9 @@ int dataPin = 7;
 int clockPin = 6;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(25, dataPin, clockPin);
-Mode* modes[1];
-int currentMode = 1;
-int numModes = 2;
+const int numModes = 3;
+Mode* modes[numModes];
+int currentMode = 2;
 CHSV colors[LED_COUNT];
 int h = 0;
 
@@ -25,6 +26,7 @@ void setup() {
   Serial.begin(9600);
   modes[0] = new OneThirdStrobe<LED_COUNT>(&colors[0]);
   modes[1] = new OneThirdStrobeWhite<LED_COUNT>(&colors[0]);
+  modes[2] = new FullStrobeWhite<LED_COUNT>(&colors[0]);
   modes[currentMode]->activate();
 }
 
@@ -32,7 +34,7 @@ void setup() {
 void loop() {
   modes[currentMode]->update();
   updateColors();
-  delay(200);
+  delay(70);
   //TODO check for mode select button
   //TODO update display text if the modes text has changed
 }

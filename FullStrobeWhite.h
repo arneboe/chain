@@ -1,18 +1,16 @@
 #pragma once
 #include "Mode.h"
-#include "OneThirdLedSelector.h"
 template <int NUM_LEDS>
-class OneThirdStrobeWhite : public Mode 
+class FullStrobeWhite : public Mode 
 {
 public:
 
-  OneThirdStrobeWhite(CHSV* colors) : Mode(colors, NUM_LEDS) 
+  FullStrobeWhite(CHSV* colors) : Mode(colors, NUM_LEDS) 
   {
   }
 
   virtual void activate()
   {
-    leds.init();
     off = true;
   }
   
@@ -21,20 +19,19 @@ public:
     if(off)
     {
       off = false;
-      leds.update();//select new leds
-      //turn new leds on
-      for(int i = 0; i < leds.onLedsSize; ++i)
+      //turn leds on
+      for(int i = 0; i < NUM_LEDS; ++i)
       {
-        colors[leds.onLeds[i]].v = 1; //this uses a HACK. v == 1 is a special case to create pure white.
+        colors[i].v = 1; //uses special case HACK
       }               
     }
     else
     {
       off = true;
       //turn leds off
-      for(int i = 0; i < leds.onLedsSize; ++i)
+      for(int i = 0; i < NUM_LEDS; ++i)
       {
-        colors[leds.onLeds[i]].v = 0;
+        colors[i].v = 0;
       }      
     }
   }
@@ -47,6 +44,5 @@ public:
 private:
   String name; //the name of this mode (needs to be short to fit in one display line)  
   String msg; //some message, will be placed in the second line of the screen
-  OneThirdLedSelector<NUM_LEDS> leds;
   bool off; //currently on or off?
 };
