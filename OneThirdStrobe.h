@@ -1,15 +1,21 @@
 #pragma once
 #include "Mode.h"
-#include <string.h> //for memcpy
 template <int NUM_LEDS>
 class OneThirdStrobe : public Mode 
 {
 public:
 
-  OneThirdStrobe(
+  OneThirdStrobe(CHSV* colors) : Mode(colors, NUM_LEDS) 
+  {
+  }
 
   virtual void activate()
   {
+    
+    currentColor.h = 0;
+    currentColor.s = 255;
+    currentColor.v = 255;
+    
     offLedsSize = 0;
     onLedsSize = 0;
     //initially 1/3 should be on, 2/3 should be off
@@ -36,9 +42,8 @@ public:
     for(int i = 0; i < onLedsSize; ++i)
     {
       newOffLeds[i] = onLeds[i];
-      colors[newOffLeds[i]].r = 0;
-      colors[newOffLeds[i]].g = 0;
-      colors[newOffLeds[i]].b = 0;
+      colors[newOffLeds[i]].v = 0;
+      colors[newOffLeds[i]].s = 0;
             
     }
     int newOffLedsSize = onLedsSize;
@@ -60,7 +65,17 @@ public:
     }
     //finally copy the new off leds to the off leds
     memcpy(offLeds, newOffLeds, sizeof(int) * newOffLedsSize);
-    onLedsSize = newOffLedsSize;
+    offLedsSize = newOffLedsSize;
+    
+    //calc new color
+    currentColor.h = (currentColor.h + 128) % 256;
+    
+    //finally turn the new leds on
+    for(int i = 0; i < onLedsSize; ++i)
+    {
+      const int colIndex = onLeds[i];
+      colors[colIndex] = currentColor;
+    }
   }
    
   virtual bool msgChanged()
@@ -75,4 +90,5 @@ private:
   int offLedsSize;
   int onLeds[NUM_LEDS];
   int onLedsSize;
+  CHSV currentColor;
 };

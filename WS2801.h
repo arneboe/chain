@@ -16,7 +16,6 @@ class WS2801 {
     begin(void),
     show(void),
     setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b),
-    setPixelColor(uint16_t n, uint32_t c),
     updatePins(uint8_t dpin, uint8_t cpin), // Change pins, configurable
     updatePins(void); // Change pins, hardware SPI
   uint16_t
