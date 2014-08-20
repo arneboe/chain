@@ -5,19 +5,20 @@
 #include "OneThirdStrobe.h"
 #include "OneThirdStrobeWhite.h"
 #include "FullStrobeWhite.h"
+#include "MusicFade.h"
 
 #define LED_COUNT 20
 
 
 void updateColors();
 
-int dataPin = 7;
-int clockPin = 6;
+int dataPin = 8;
+int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(25, dataPin, clockPin);
-const int numModes = 3;
+const int numModes = 4;
 Mode* modes[numModes];
-int currentMode = 2;
+int currentMode = 3;
 CHSV colors[LED_COUNT];
 int h = 0;
 
@@ -27,6 +28,7 @@ void setup() {
   modes[0] = new OneThirdStrobe<LED_COUNT>(&colors[0]);
   modes[1] = new OneThirdStrobeWhite<LED_COUNT>(&colors[0]);
   modes[2] = new FullStrobeWhite<LED_COUNT>(&colors[0]);
+  modes[3] = new MusicFade<LED_COUNT>(&colors[0]);
   modes[currentMode]->activate();
 }
 
@@ -57,7 +59,7 @@ void updateColors()
     //scale green down to 35%
     //because green is much brighter
     //35% has been calculated from the datasheet lumen values (34.x% really)
-    rgb.g = map(rgb.g, 0, 255, 0, 89);
+   // rgb.g = map(rgb.g, 0, 255, 0, 89);
     strip.setPixelColor(i, rgb.r, rgb.g, rgb.b);
   }
   strip.show();
