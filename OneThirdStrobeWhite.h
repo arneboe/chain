@@ -43,10 +43,13 @@ public:
   {
     return false;
   }
+  
+  virtual const char* getName() 
+  {
+    return "1/3 Strobe";
+  }
 
 private:
-  String name; //the name of this mode (needs to be short to fit in one display line)  
-  String msg; //some message, will be placed in the second line of the screen
   OneThirdLedSelector<NUM_LEDS> leds;
   bool off; //currently on or off?
 };

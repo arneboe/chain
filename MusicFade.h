@@ -78,10 +78,13 @@ public:
   {
     return false;
   }
+  
+  virtual const char* getName() 
+  {
+    return "Music Fade";
+  }
 
 private:
-  String name; //the name of this mode (needs to be short to fit in one display line)  
-  String msg; //some message, will be placed in the second line of the screen
   Equalizer eq;
   unsigned currentMillis;
   unsigned lastMillis;

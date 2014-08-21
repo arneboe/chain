@@ -1,5 +1,6 @@
 #pragma once
 #include "Mode.h"
+#include "Time.h"
 template <int NUM_LEDS>
 class FullStrobeWhite : public Mode 
 {
@@ -16,6 +17,8 @@ public:
   
   virtual void update()
   {
+    WAIT(100);
+    
     if(off)
     {
       off = false;
@@ -40,9 +43,12 @@ public:
   {
     return false;
   }
+  
+  virtual const char* getName() 
+  {
+    return "Strobe";
+  }
 
 private:
-  String name; //the name of this mode (needs to be short to fit in one display line)  
-  String msg; //some message, will be placed in the second line of the screen
   bool off; //currently on or off?
 };

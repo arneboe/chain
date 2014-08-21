@@ -7,8 +7,7 @@ class OneThirdStrobe : public Mode
 public:
 
   OneThirdStrobe(CHSV* colors) : Mode(colors, NUM_LEDS) 
-  {
-  }
+  { }
 
   virtual void activate()
   {
@@ -40,10 +39,13 @@ public:
   {
     return false;
   }
+  
+  virtual const char* getName() 
+  {
+    return "1/3 Col-Strobe";
+  }
 
 private:
-  String name; //the name of this mode (needs to be short to fit in one display line)  
-  String msg; //some message, will be placed in the second line of the screen
   OneThirdLedSelector<NUM_LEDS> leds;
   CHSV currentColor;
 };

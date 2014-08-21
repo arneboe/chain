@@ -1,11 +1,14 @@
 #include "Color.h"
-#include "SPI.h"
+#include <SPI.h>
 #include "WS2801.h"
 #include "Mode.h"
 #include "OneThirdStrobe.h"
 #include "OneThirdStrobeWhite.h"
 #include "FullStrobeWhite.h"
 #include "MusicFade.h"
+#include <Adafruit_GFX.h>
+#include <Adafruit_PCD8544.h>
+
 
 #define LED_COUNT 20
 
@@ -15,20 +18,32 @@ void updateColors();
 int dataPin = 8;
 int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
-WS2801 strip = WS2801(25, dataPin, clockPin);
+WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
 const int numModes = 4;
 Mode* modes[numModes];
-int currentMode = 3;
+int currentMode = 0;
 CHSV colors[LED_COUNT];
 int h = 0;
+Adafruit_PCD8544 display = Adafruit_PCD8544(A4, A3, A2, A1, A0);
 
-void setup() {
-  strip.begin();
-  Serial.begin(9600);
+void setup() 
+{
   modes[0] = new OneThirdStrobe<LED_COUNT>(&colors[0]);
   modes[1] = new OneThirdStrobeWhite<LED_COUNT>(&colors[0]);
   modes[2] = new FullStrobeWhite<LED_COUNT>(&colors[0]);
   modes[3] = new MusicFade<LED_COUNT>(&colors[0]);
+  
+  strip.begin();
+  Serial.begin(9600);
+  
+  display.begin();
+  display.setContrast(50);
+  display.clearDisplay(); 
+  display.setTextSize(2);
+  display.setTextColor(BLACK);
+  display.println(modes[currentMode]->getName());
+  display.display();
+  Serial.println(modes[currentMode]->getName());
   modes[currentMode]->activate();
 }
 
@@ -36,7 +51,6 @@ void setup() {
 void loop() {
   modes[currentMode]->update();
   updateColors();
-  delay(70);
   //TODO check for mode select button
   //TODO update display text if the modes text has changed
 }
