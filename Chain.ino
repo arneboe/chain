@@ -24,7 +24,7 @@ Mode* modes[numModes];
 int currentMode = 0;
 CHSV colors[LED_COUNT];
 int h = 0;
-Adafruit_PCD8544 display = Adafruit_PCD8544(A4, A3, A2, A1, A0);
+Adafruit_PCD8544 display = Adafruit_PCD8544(7, A3, A2, A1, A0);
 
 void setup() 
 {
