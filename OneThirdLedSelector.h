@@ -26,7 +26,7 @@ public:
     }
   }
   
-  void update(const int potiValue)
+  void update()
   {
     int newOffLeds[NUM_LEDS];
     //first move all leds that are on to the new off led list

@@ -62,8 +62,8 @@ public:
     {
       //do the fading
       currentColor.h = mod(currentColor.h + (direction * offset), 256);
-      currentColor.s = 100;
-      currentColor.v = 100;
+      currentColor.s = 255;
+      currentColor.v = 255;
       fadeSpeedMs *= fadeDecay;
       lastMillis = currentMillis;
       
