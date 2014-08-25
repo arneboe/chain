@@ -1,6 +1,7 @@
 #pragma once
 #include "Mode.h"
 #include "OneThirdLedSelector.h"
+#include "Time.h"
 template <int NUM_LEDS>
 class OneThirdStrobe : public Mode 
 {
@@ -17,8 +18,9 @@ public:
     leds.init();
   }
   
-  virtual void update()
+  virtual void update(const int potiValue)
   {
+    WAIT(map(potiValue, 0, 1023, 0, 1000));
     //calc new color
     currentColor.h = (currentColor.h + 129) % 256; //129 to move around in a slow circle
     leds.update();

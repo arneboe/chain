@@ -15,9 +15,9 @@ public:
     off = true;
   }
   
-  virtual void update()
+  virtual void update(const int potiValue)
   {
-    WAIT(100);
+    WAIT(map(potiValue, 0, 1023, 0, 1000));
     
     if(off)
     {

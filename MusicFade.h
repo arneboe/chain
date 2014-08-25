@@ -27,7 +27,7 @@ public:
   {
   }
   
-  virtual void update()
+  virtual void update(const int potiValue)
   {
     static RingBuffer<short, 40> buffers[7];
     const int noise = 120;

@@ -11,6 +11,7 @@
 
 
 #define LED_COUNT 20
+#define PIN_POTI A4
 
 
 void updateColors();
@@ -39,18 +40,20 @@ void setup()
   display.begin();
   display.setContrast(50);
   display.clearDisplay(); 
-  display.setTextSize(2);
+  display.setTextSize(1);
   display.setTextColor(BLACK);
-  display.println(modes[currentMode]->getName());
-  display.display();
   Serial.println(modes[currentMode]->getName());
   modes[currentMode]->activate();
 }
 
 
 void loop() {
-  modes[currentMode]->update();
+  const int potiValue = analogRead(PIN_POTI);
+  modes[currentMode]->update(potiValue);
   updateColors();
+  display.clearDisplay();
+  display.println(modes[currentMode]->getName());
+  display.display();
   //TODO check for mode select button
   //TODO update display text if the modes text has changed
 }
@@ -73,7 +76,7 @@ void updateColors()
     //scale green down to 35%
     //because green is much brighter
     //35% has been calculated from the datasheet lumen values (34.x% really)
-   // rgb.g = map(rgb.g, 0, 255, 0, 89);
+    //rgb.g = map(rgb.g, 0, 255, 0, 89);
     strip.setPixelColor(i, rgb.r, rgb.g, rgb.b);
   }
   strip.show();
