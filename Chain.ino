@@ -6,6 +6,7 @@
 #include "OneThirdStrobeWhite.h"
 #include "FullStrobeWhite.h"
 #include "MusicFade.h"
+#include "Fade.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -22,12 +23,19 @@ int dataPin = 8;
 int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
-const int numModes = 4;
+const int numModes = 5;
 Mode* modes[numModes];
 int currentMode = 0;
 CHSV colors[LED_COUNT];
 int h = 0;
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, A3, A2, A1, A0);
+
+
+int freeRam () {
+  extern int __heap_start, *__brkval; 
+  int v; 
+  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
+}
 
 void setup() 
 {
@@ -35,6 +43,7 @@ void setup()
   modes[1] = new OneThirdStrobeWhite<LED_COUNT>(&colors[0]);
   modes[2] = new FullStrobeWhite<LED_COUNT>(&colors[0]);
   modes[3] = new MusicFade<LED_COUNT>(&colors[0]);
+  modes[4] = new Fade<LED_COUNT>(&colors[0]);
   
   strip.begin();
   Serial.begin(9600);
@@ -52,6 +61,7 @@ void setup()
 
 
 void loop() {
+  Serial.println(freeRam());
   const int buttonPressed = !readButton(); //negate because button is 0 when pressed
   if(buttonPressed)
   {
