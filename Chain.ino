@@ -93,14 +93,14 @@ void updateColors()
   strip.show();
 }
 
-//button is allowed to change state every 200 ms
+//button is allowed to change state every 400 ms
 int readButton()
 {
   static int lastPressTime = 0;
   const int currentTime = millis();
   const int timeDiff = currentTime - lastPressTime;
   const int val = digitalRead(PIN_BUTTON);
-  if(val == 0 && timeDiff > 200)
+  if(val == 0 && timeDiff > 400)
   {
     lastPressTime = currentTime;
     return 0;
