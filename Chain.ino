@@ -12,9 +12,11 @@
 
 #define LED_COUNT 20
 #define PIN_POTI A4
+#define PIN_BUTTON 6
 
 
 void updateColors();
+int readButton();
 
 int dataPin = 8;
 int clockPin = 9;
@@ -36,6 +38,8 @@ void setup()
   
   strip.begin();
   Serial.begin(9600);
+ 
+  pinMode(PIN_BUTTON, INPUT_PULLUP);
   
   display.begin();
   display.setContrast(50);
@@ -48,14 +52,21 @@ void setup()
 
 
 void loop() {
+  const int buttonPressed = !readButton(); //negate because button is 0 when pressed
+  if(buttonPressed)
+  {
+    currentMode = (currentMode + 1) % numModes;
+    modes[currentMode]->activate();
+  }
+  
   const int potiValue = analogRead(PIN_POTI);
   modes[currentMode]->update(potiValue);
+  
   updateColors();
+  
   display.clearDisplay();
   display.println(modes[currentMode]->getName());
   display.display();
-  //TODO check for mode select button
-  //TODO update display text if the modes text has changed
 }
 
 void updateColors()
@@ -80,5 +91,20 @@ void updateColors()
     strip.setPixelColor(i, rgb.r, rgb.g, rgb.b);
   }
   strip.show();
+}
+
+//button is allowed to change state every 200 ms
+int readButton()
+{
+  static int lastPressTime = 0;
+  const int currentTime = millis();
+  const int timeDiff = currentTime - lastPressTime;
+  const int val = digitalRead(PIN_BUTTON);
+  if(val == 0 && timeDiff > 200)
+  {
+    lastPressTime = currentTime;
+    return 0;
+  }
+  return 1;
 }
 

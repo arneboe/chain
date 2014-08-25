@@ -7,6 +7,7 @@
 #define PIN_MSG_STROBE 11
 #define PIN_MSG_RESET 10
 
+
 //modulo that handles negative correctly
 int mod(int x, int m) 
 {
