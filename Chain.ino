@@ -2,6 +2,7 @@
 #include <SPI.h>
 #include "WS2801.h"
 #include "Fade.h"
+#include "FullStrobeWhite.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -20,7 +21,9 @@ int clockPin = 9;
 WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
 const int numModes = 5;
 typedef void (*initPtr)(void);
-typedef void (*updatePtr)(int, CHSV*, int);
+
+//returns message, int = poti value, chsv=color array, int= number of colors
+typedef char* (*updatePtr)(int, CHSV*, int);
 updatePtr update[numModes];
 initPtr initt[numModes]; //stupid name because init() is already used by arduino.h
 char* names[numModes];
@@ -45,6 +48,10 @@ void setup()
   initt[0] = fadeInit;
   names[0] = "Fade";
   
+  update[1] = fullStrobeUpdate;
+  initt[1] = fullStrobeInit;
+  names[1] = "Strobe";
+  
   initt[currentMode]();
 }
 
@@ -59,12 +66,13 @@ void loop() {
   }
   
   const int potiValue = analogRead(PIN_POTI);
-  update[currentMode](potiValue, colors, LED_COUNT);
+  char* text = update[currentMode](potiValue, colors, LED_COUNT);
   
   updateColors();
   
   display.clearDisplay();
   display.println(names[currentMode]);
+  display.println(text);
   display.display();
 }
 
