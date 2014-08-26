@@ -6,13 +6,13 @@ class OneThirdStrobeWhite : public Mode
 {
 public:
 
-  OneThirdStrobeWhite(CHSV* colors) : Mode(colors, NUM_LEDS) 
+  OneThirdStrobeWhite(CHSV* colors, OneThirdLedSelector<NUM_LEDS>* leds) : Mode(colors, NUM_LEDS), leds(leds)
   {
   }
 
   virtual void activate()
   {
-    leds.init();
+    leds->init();
     off = true;
   }
   
@@ -22,20 +22,20 @@ public:
     if(off)
     {
       off = false;
-      leds.update();//select new leds
+      leds->update();//select new leds
       //turn new leds on
-      for(int i = 0; i < leds.onLedsSize; ++i)
+      for(int i = 0; i < leds->onLedsSize; ++i)
       {
-        colors[leds.onLeds[i]].v = 1; //this uses a HACK. v == 1 is a special case to create pure white.
+        colors[leds->onLeds[i]].v = 1; //this uses a HACK. v == 1 is a special case to create pure white.
       }               
     }
     else
     {
       off = true;
       //turn leds off
-      for(int i = 0; i < leds.onLedsSize; ++i)
+      for(int i = 0; i < leds->onLedsSize; ++i)
       {
-        colors[leds.onLeds[i]].v = 0;
+        colors[leds->onLeds[i]].v = 0;
       }      
     }
   }
@@ -51,6 +51,6 @@ public:
   }
 
 private:
-  OneThirdLedSelector<NUM_LEDS> leds;
+  OneThirdLedSelector<NUM_LEDS>* leds;
   bool off; //currently on or off?
 };

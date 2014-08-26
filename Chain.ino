@@ -1,11 +1,6 @@
 #include "Color.h"
 #include <SPI.h>
 #include "WS2801.h"
-#include "Mode.h"
-#include "OneThirdStrobe.h"
-#include "OneThirdStrobeWhite.h"
-#include "FullStrobeWhite.h"
-#include "MusicFade.h"
 #include "Fade.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
@@ -24,27 +19,17 @@ int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
 const int numModes = 5;
-Mode* modes[numModes];
+typedef void (*initPtr)(void);
+typedef void (*updatePtr)(int, CHSV*, int);
+updatePtr update[numModes];
+initPtr initt[numModes]; //stupid name because init() is already used by arduino.h
+char* names[numModes];
 int currentMode = 0;
 CHSV colors[LED_COUNT];
-int h = 0;
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, A3, A2, A1, A0);
-
-
-int freeRam () {
-  extern int __heap_start, *__brkval; 
-  int v; 
-  return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
-}
 
 void setup() 
 {
-  modes[0] = new OneThirdStrobe<LED_COUNT>(&colors[0]);
-  modes[1] = new OneThirdStrobeWhite<LED_COUNT>(&colors[0]);
-  modes[2] = new FullStrobeWhite<LED_COUNT>(&colors[0]);
-  modes[3] = new MusicFade<LED_COUNT>(&colors[0]);
-  modes[4] = new Fade<LED_COUNT>(&colors[0]);
-  
   strip.begin();
   Serial.begin(9600);
  
@@ -55,27 +40,31 @@ void setup()
   display.clearDisplay(); 
   display.setTextSize(1);
   display.setTextColor(BLACK);
-  Serial.println(modes[currentMode]->getName());
-  modes[currentMode]->activate();
+
+  update[0] = fadeUpdate;
+  initt[0] = fadeInit;
+  names[0] = "Fade";
+  
+  initt[currentMode]();
 }
 
 
 void loop() {
-  Serial.println(freeRam());
+ // Serial.println(freeRam());
   const int buttonPressed = !readButton(); //negate because button is 0 when pressed
   if(buttonPressed)
   {
     currentMode = (currentMode + 1) % numModes;
-    modes[currentMode]->activate();
+    initt[currentMode]();
   }
   
   const int potiValue = analogRead(PIN_POTI);
-  modes[currentMode]->update(potiValue);
+  update[currentMode](potiValue, colors, LED_COUNT);
   
   updateColors();
   
   display.clearDisplay();
-  display.println(modes[currentMode]->getName());
+  display.println(names[currentMode]);
   display.display();
 }
 

@@ -1,62 +1,49 @@
 #pragma once
-#include "Mode.h"
 #include "Time.h"
-template <int NUM_LEDS>
-class Fade : public Mode 
+
+struct FadeData
 {
-public:
-
-  Fade(CHSV* colors) : Mode(colors, NUM_LEDS) 
-  { }
-
-  virtual void activate()
-  {
-    for(int i = 0; i < 4; ++i)
-    {
-      dir[i] = 1;
-      current[i] = 0;
-    }
-    target[0] = 0;
-    target[1] = 64;
-    target[2] = 128;
-    target[3] = 196;
-  }
-  
-  virtual void update(const int potiValue)
-  {
-    WAIT(map(potiValue, 0, 1023, 0, 1000));
-
-    for(int i = 0; i <4; ++i)
-    {
-      if(abs(target[i] - current[i]) < 3)
-      {//select new target
-        target[i] = random(0, 256);
-        dir[i] = random(0,2) >= 1? 1 : -1;
-      }      
-      current[i] += dir[i];
-    }
-    
-    int t = 0;
-    for(int led = 0; led < NUM_LEDS; ++led, t = (t + 1) % 4)
-    {
-      colors[led].h = current[t];
-      colors[led].s = 255;
-      colors[led].v = 255;
-    }
-  }
-   
-  virtual bool msgChanged()
-  {
-    return false;
-  }
-  
-  virtual const char* getName() 
-  {
-    return "Fade";
-  }
-
-private:
   unsigned char target[4];
   unsigned char current[4];
-  char dir[4];
+  char dir[4];  
 };
+static FadeData data;
+
+
+void fadeInit()
+{
+  for(int i = 0; i < 4; ++i)
+  {
+    data.dir[i] = 1;
+    data.current[i] = 0;
+  }
+  data.target[0] = 0;
+  data.target[1] = 64;
+  data.target[2] = 128;
+  data.target[3] = 196;
+}
+
+void fadeUpdate(int potiValue, CHSV* colors, int colorSize)
+{
+  WAIT(map(potiValue, 0, 1023, 0, 1000));
+
+  for(int i = 0; i <4; ++i)
+  {
+    if(abs(data.target[i] - data.current[i]) < 3)
+    {//select new target
+      data.target[i] = random(0, 256);
+      data.dir[i] = random(0,2) >= 1? 1 : -1;
+    }      
+    data.current[i] += data.dir[i];
+  }
+  
+  int t = 0;
+  for(int led = 0; led < colorSize; ++led, t = (t + 1) % 4)
+  {
+    colors[led].h = data.current[t];
+    colors[led].s = 255;
+    colors[led].v = 255;
+  }  
+}
+
+

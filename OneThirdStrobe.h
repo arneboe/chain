@@ -7,7 +7,7 @@ class OneThirdStrobe : public Mode
 {
 public:
 
-  OneThirdStrobe(CHSV* colors) : Mode(colors, NUM_LEDS) 
+  OneThirdStrobe(CHSV* colors, OneThirdLedSelector<NUM_LEDS>* leds) : Mode(colors, NUM_LEDS), leds(leds)
   { }
 
   virtual void activate()
@@ -15,7 +15,7 @@ public:
     currentColor.h = 0;
     currentColor.s = 255;
     currentColor.v = 255;
-    leds.init();
+    leds->init();
   }
   
   virtual void update(const int potiValue)
@@ -23,17 +23,17 @@ public:
     WAIT(map(potiValue, 0, 1023, 0, 1000));
     //calc new color
     currentColor.h = (currentColor.h + 129) % 256; //129 to move around in a slow circle
-    leds.update();
+    leds->update();
     //turn old leds off
-    for(int i = 0; i < leds.offLedsSize; ++i)
+    for(int i = 0; i < leds->offLedsSize; ++i)
     {
-      colors[leds.offLeds[i]].v = 0;
+      colors[leds->offLeds[i]].v = 0;
     }
     
     //turn new leds on
-    for(int i = 0; i < leds.onLedsSize; ++i)
+    for(int i = 0; i < leds->onLedsSize; ++i)
     {
-      colors[leds.onLeds[i]] = currentColor;
+      colors[leds->onLeds[i]] = currentColor;
     }
   }
    
@@ -48,6 +48,5 @@ public:
   }
 
 private:
-  OneThirdLedSelector<NUM_LEDS> leds;
   CHSV currentColor;
 };

@@ -30,7 +30,7 @@ public:
   
   virtual void update(const int potiValue)
   {
-    static RingBuffer<short, 40> buffers[7];
+    static RingBuffer<short, 40> buffers[3];
     const int noise = 120;
     currentMillis = millis();
     static float fadeSpeedMs = 1.0; //how many degrees should the fade move per ms

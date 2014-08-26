@@ -53,12 +53,12 @@ public:
       }
     }
     //finally copy the new off leds to the off leds
-    memcpy(offLeds, newOffLeds, sizeof(int) * newOffLedsSize);
+    memcpy(offLeds, newOffLeds, sizeof(unsigned char) * newOffLedsSize);
     offLedsSize = newOffLedsSize;
   }
 
-  int offLeds[NUM_LEDS];//contains the leds that are currently off
+  unsigned char offLeds[NUM_LEDS];//contains the leds that are currently off
   int offLedsSize;
-  int onLeds[NUM_LEDS];
+  unsigned char onLeds[NUM_LEDS];
   int onLedsSize;
 };
