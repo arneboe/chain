@@ -3,6 +3,7 @@
 #include "WS2801.h"
 #include "Fade.h"
 #include "FullStrobeWhite.h"
+#include "HalfStrobeWhite.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -51,6 +52,10 @@ void setup()
   update[1] = fullStrobeUpdate;
   initt[1] = fullStrobeInit;
   names[1] = "Strobe";
+  
+  update[2] = halfStrobeWhiteUpdate;
+  initt[2] = halfStrobeWhiteInit;
+  names[2] = "1/2 Strobe";
   
   initt[currentMode]();
 }
