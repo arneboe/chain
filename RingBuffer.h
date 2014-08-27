@@ -23,7 +23,7 @@ public:
     index = (index + 1) % (COUNT-1);
     sum += d;
   }
-  
+
   
   
 private:

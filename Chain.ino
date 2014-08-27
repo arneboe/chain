@@ -5,6 +5,7 @@
 #include "FullStrobeWhite.h"
 #include "HalfStrobeWhite.h"
 #include "OneThirdStrobe.h"
+#include "MusicFade.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -61,6 +62,10 @@ void setup()
   update[3] = oneThirdStrobeUpdate;
   initt[3] = oneThirdStrobeInit;
   names[3] = "1/3 Strobe";
+
+  update[4] = musicFadeUpdate;
+  initt[4] = musicFadeInit;
+  names[4] = "Bass Detect";
   
   initt[currentMode]();
 }
@@ -113,9 +118,9 @@ void updateColors()
 //button is allowed to change state every 400 ms
 int readButton()
 {
-  static int lastPressTime = 0;
-  const int currentTime = millis();
-  const int timeDiff = currentTime - lastPressTime;
+  static unsigned long lastPressTime = 0;
+  const unsigned long currentTime = millis();
+  const unsigned long timeDiff = currentTime - lastPressTime;
   const int val = digitalRead(PIN_BUTTON);
   if(val == 0 && timeDiff > 400)
   {
