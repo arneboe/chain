@@ -1,11 +1,4 @@
 #pragma once
-#include "Equalizer.h"
-#include "RingBuffer.h"
-
-#define PIN_MSG_OUT A5
-#define PIN_MSG_STROBE 11
-#define PIN_MSG_RESET 10
-
 
 struct MusicFadeData
 {
@@ -21,11 +14,11 @@ struct MusicFadeData
   unsigned long lastTime;
 };
 MusicFadeData mfData;
-Equalizer eq(PIN_MSG_OUT, PIN_MSG_STROBE, PIN_MSG_RESET);
+
 
 void musicFadeInit()
 {
-  mfData.fadeDecay = 0.5;
+  mfData.fadeDecay = 0.7;
   mfData.fadeSpeed = 0.0; //per ms
   mfData.bassDetected = false;
   mfData.h = 0; //current fade target
