@@ -4,6 +4,7 @@
 #include "Fade.h"
 #include "FullStrobeWhite.h"
 #include "HalfStrobeWhite.h"
+#include "OneThirdStrobe.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
 
@@ -56,6 +57,10 @@ void setup()
   update[2] = halfStrobeWhiteUpdate;
   initt[2] = halfStrobeWhiteInit;
   names[2] = "1/2 Strobe";
+  
+  update[3] = oneThirdStrobeUpdate;
+  initt[3] = oneThirdStrobeInit;
+  names[3] = "1/3 Strobe";
   
   initt[currentMode]();
 }

@@ -3,7 +3,6 @@
 
 struct HalfStrobeWhiteData
 {
-  bool first;
   bool off;
   char text[11];
 };
@@ -12,7 +11,6 @@ HalfStrobeWhiteData htswData;
 
 void halfStrobeWhiteInit()
 {
-  htswData.first = true;
   htswData.off = true;
 }
 

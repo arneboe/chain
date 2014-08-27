@@ -1,52 +1,64 @@
 #pragma once
-#include "Mode.h"
-#include "OneThirdLedSelector.h"
 #include "Time.h"
-template <int NUM_LEDS>
-class OneThirdStrobe : public Mode 
+
+
+struct OneThirdStrobeData
 {
-public:
-
-  OneThirdStrobe(CHSV* colors, OneThirdLedSelector<NUM_LEDS>* leds) : Mode(colors, NUM_LEDS), leds(leds)
-  { }
-
-  virtual void activate()
-  {
-    currentColor.h = 0;
-    currentColor.s = 255;
-    currentColor.v = 255;
-    leds->init();
-  }
-  
-  virtual void update(const int potiValue)
-  {
-    WAIT(map(potiValue, 0, 1023, 0, 1000));
-    //calc new color
-    currentColor.h = (currentColor.h + 129) % 256; //129 to move around in a slow circle
-    leds->update();
-    //turn old leds off
-    for(int i = 0; i < leds->offLedsSize; ++i)
-    {
-      colors[leds->offLeds[i]].v = 0;
-    }
-    
-    //turn new leds on
-    for(int i = 0; i < leds->onLedsSize; ++i)
-    {
-      colors[leds->onLeds[i]] = currentColor;
-    }
-  }
-   
-  virtual bool msgChanged()
-  {
-    return false;
-  }
-  
-  virtual const char* getName() 
-  {
-    return "1/3 Col-Strobe";
-  }
-
-private:
-  CHSV currentColor;
+  char text[11];//Speed: XXX\0  
+  unsigned char h;
+  bool first;
+  int reInitCounter;
 };
+OneThirdStrobeData otsData;
+
+
+void oneThirdStrobeInit()
+{
+  otsData.h = 0;
+  otsData.first = true;
+  otsData.reInitCounter = 0;
+}
+
+char* oneThirdStrobeUpdate(int potiValue, CHSV* colors, int colorSize)
+{
+  WAIT(map(potiValue, 0, 1023, 0, 1000), otsData.text);
+  
+  //reinitialize every 1000 frames to avoid getting stuck
+  if(otsData.first || otsData.reInitCounter > 1000)
+  {
+    otsData.first = false;
+    otsData.reInitCounter = 0;
+    for(int i = 0; i < colorSize; ++i)
+    {//pre initialize 1/3 of the leds
+      if(random(0,3) == 0)
+      {
+        colors[i].v = 255;
+      }
+      else
+      {
+        colors[i].v = 0;
+      }
+    }
+  }
+  ++otsData.reInitCounter;
+  
+  otsData.h += 126; //will overflow and run in circles
+  
+  for(int i = 0; i <colorSize; ++i)
+  {
+    if(colors[i].v == 0 && random(0,2) == 0)
+    {//if led is off: 1/2 chance to turn it on
+      colors[i].v = 255;
+      colors[i].s = 255;
+      colors[i].h = otsData.h;
+    }
+    else
+    {//if led is on or was not chosen: turn off
+      colors[i].v = 0;
+    }
+  }
+
+  sprintf(otsData.text, "Speed: %d", map(potiValue, 0, 1023, 100, 0));
+  return otsData.text;  
+}
+
