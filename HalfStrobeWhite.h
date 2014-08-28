@@ -25,7 +25,8 @@ char* halfStrobeWhiteUpdate(int potiValue, CHSV* colors, int colorSize)
     {
       if(random(0,2) == 0)
       {
-        colors[i].v = 1; //uses special case HACK
+      colors[i].s = 0; 
+      colors[i].v = 255;
       }
     }               
   }

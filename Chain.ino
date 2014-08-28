@@ -1,4 +1,4 @@
-#include "Color.h"
+#include "hsv2rgb.h"
 #include <SPI.h>
 #include "WS2801.h"
 #include "Fade.h"
@@ -11,8 +11,10 @@
 #define PIN_MSG_RESET 10
 //dirty hack to get the equalizer in all relevant files :D
 Equalizer eq(PIN_MSG_OUT, PIN_MSG_STROBE, PIN_MSG_RESET);
-//#include "MusicFade.h"
+#include "MusicFade.h"
 #include "Spectrum.h"
+#include "Spectrum2.h"
+#include "Spectrum3.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
@@ -30,7 +32,7 @@ int dataPin = 8;
 int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
-const int numModes = 6;
+const int numModes = 8;
 typedef void (*initPtr)(void);
 
 //returns message, int = poti value, chsv=color array, int= number of colors
@@ -71,13 +73,21 @@ void setup()
   initt[3] = oneThirdStrobeInit;
   names[3] = "1/3 Strobe";
 
-//  update[4] = musicFadeUpdate;
-//  initt[4] = musicFadeInit;
-//  names[4] = "Bass Detect";
+  update[4] = musicFadeUpdate;
+  initt[4] = musicFadeInit;
+  names[4] = "Bass Detect";
 
-  update[4] = spectrumUpdate;
-  initt[4] = spectrumInit;
-  names[4] = "Spectrum";  
+  update[5] = spectrumUpdate;
+  initt[5] = spectrumInit;
+  names[5] = "Spectrum";
+  
+  update[6] = spectrum2Update;
+  initt[6] = spectrum2Init;
+  names[6] = "Spectrum2";  
+  
+  update[7] = spectrum3Update;
+  initt[7] = spectrum3Init;
+  names[7] = "Spectrum3";  
   initt[currentMode]();
 }
 
@@ -107,16 +117,7 @@ void updateColors()
   CRGB rgb;
   for(int i = 0; i < LED_COUNT; ++i)
   {
-    if(colors[i].v == 1) //special case: white
-    {
-      rgb.r = 255;
-      rgb.b = 255;
-      rgb.g = 255;
-    }
-    else
-    {
-      hsv2rgb_rainbow(colors[i], rgb);
-    }
+    hsv2rgb_rainbow(colors[i], rgb);
     //scale green down to 35%
     //because green is much brighter
     //35% has been calculated from the datasheet lumen values (34.x% really)

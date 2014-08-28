@@ -23,7 +23,8 @@ char* fullStrobeUpdate(int potiValue, CHSV* colors, int colorSize)
     //turn leds on
     for(int i = 0; i < colorSize; ++i)
     {
-      colors[i].v = 1; //uses special case HACK
+      colors[i].s = 0; 
+      colors[i].v = 255;
     }               
   }
   else
