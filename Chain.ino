@@ -15,6 +15,7 @@ Equalizer eq(PIN_MSG_OUT, PIN_MSG_STROBE, PIN_MSG_RESET);
 #include "Spectrum.h"
 #include "Spectrum2.h"
 #include "Spectrum3.h"
+#include "ColorSelect.h"
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_PCD8544.h>
@@ -32,7 +33,7 @@ int dataPin = 8;
 int clockPin = 9;
 // Set the first variable to the NUMBER of pixels. 25 = 25 pixels in a row
 WS2801 strip = WS2801(LED_COUNT, dataPin, clockPin);
-const int numModes = 8;
+const int numModes = 9;
 typedef void (*initPtr)(void);
 
 //returns message, int = poti value, chsv=color array, int= number of colors
@@ -40,7 +41,7 @@ typedef char* (*updatePtr)(int, CHSV*, int);
 updatePtr update[numModes];
 initPtr initt[numModes]; //stupid name because init() is already used by arduino.h
 char* names[numModes];
-int currentMode = 0;
+int currentMode = 8;
 CHSV colors[LED_COUNT];
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, A3, A2, A1, A0);
 
@@ -56,7 +57,7 @@ void setup()
   display.clearDisplay(); 
   display.setTextSize(1);
   display.setTextColor(BLACK);
-
+  
   update[0] = fadeUpdate;
   initt[0] = fadeInit;
   names[0] = "Fade";
@@ -88,6 +89,11 @@ void setup()
   update[7] = spectrum3Update;
   initt[7] = spectrum3Init;
   names[7] = "Spectrum3";  
+  
+  update[8] = colorSelectUpdate;
+  initt[8] = colorSelectInit;
+  names[8] = "Col Select";
+  
   initt[currentMode]();
 }
 
